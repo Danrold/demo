@@ -1,18 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.EditRequestDTO;
 import com.example.demo.entity.Survey;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface SurveyService {
 
-    List<Survey> getAll();
+    List<Survey> getAll(String field, boolean isAscending);
 
     Survey create(String name);
 
-    Survey edit(Survey survey);
+    Survey edit(EditRequestDTO editRequest);
 
-    void delete(Survey survey);
+    void delete(String id);
 
 }
