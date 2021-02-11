@@ -1,16 +1,20 @@
 package com.example.demo.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "surveys")
 public class Survey {
 
     @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", unique = true, nullable = false)
     private UUID id;
 
@@ -28,4 +32,9 @@ public class Survey {
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
     private List<Question> questions;
+
+    public Survey(String name) {
+        this.name = name;
+        isActive = false;
+    }
 }
