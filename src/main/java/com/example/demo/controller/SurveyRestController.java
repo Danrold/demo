@@ -24,9 +24,12 @@ import javax.validation.constraints.*;
 public class SurveyRestController {
 
     /**
-     * Сервисы осуществляющие логику работы с сущностями
+     * Сервис осуществляющий логику работы с опросами
      */
     private final SurveyService surveyService;
+    /**
+     * Сервис осуществляющий логику работы с вопросами
+     */
     private final QuestionService questionService;
 
     /**
