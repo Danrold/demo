@@ -24,11 +24,10 @@ public class SurveyServiceImpl implements SurveyService{
     }
 
     @Override
-    public List<Survey> getAll(String field, boolean isAscending) throws RuntimeException{
-        if(field == null) throw new RuntimeException("Необходимо указать поле для сортировки");
-        if(!field.equals("name") && !field.equals("startDate")) throw new RuntimeException("Сортировка доступна только по полям name, start_date");
+    public List<Survey> getAll(String field, String isAscending) throws RuntimeException{
+        if(!field.equals("name") && !field.equals("startDate")) throw new RuntimeException("Сортировка доступна только по полям name, startDate");
         Sort sort;
-        if(isAscending){
+        if(Boolean.parseBoolean(isAscending)){
             sort = Sort.by(field).ascending();
         }else {
             sort = Sort.by(field).descending();
@@ -37,11 +36,8 @@ public class SurveyServiceImpl implements SurveyService{
     }
 
     @Override
-    public Survey create(String name) throws RuntimeException{
-        if(name == null) throw new RuntimeException("Необходимо указать имя создаваемого опроса");
+    public Survey create(String name){
         Survey survey = new Survey(name);
-        survey.setStartDate(new Date());
-        survey.setEndDate(new Date());
         return surveyRepository.saveAndFlush(survey);
     }
 
@@ -49,23 +45,24 @@ public class SurveyServiceImpl implements SurveyService{
     public Survey edit(EditRequestDTO editRequest) throws RuntimeException {
         Survey survey = surveyRepository.findById(UUID.fromString(editRequest.getId())).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
 
+        Date start = editRequest.getStart();
+        Date end = editRequest.getEnd();
+
+        if(start.after(end)){
+            throw new RuntimeException("Дата начала опроса не может быть поже даты завершения опроса");
+        }
+
         survey.setName(editRequest.getName());
-        survey.setStartDate(new Date(editRequest.getStart()));
-        survey.setEndDate(new Date(editRequest.getEnd()));
-        survey.setActive(editRequest.getIsActive());
+        survey.setStartDate(editRequest.getStart());
+        survey.setEndDate(editRequest.getEnd());
+        survey.setActive(Boolean.parseBoolean(editRequest.getIsActive()));
 
         return surveyRepository.saveAndFlush(survey);
     }
 
     @Override
     public void delete(String id) throws RuntimeException{
-        if(id == null) throw new RuntimeException("Необходимо указать ID удаляемого опроса");
-        UUID uuid;
-        try{
-            uuid = UUID.fromString(id);
-        }catch (IllegalArgumentException exception){
-            throw new RuntimeException("Ошибка формата ID");
-        }
+        UUID uuid = UUID.fromString(id);
         Survey survey = surveyRepository.findById(uuid).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
         surveyRepository.delete(survey);
     }

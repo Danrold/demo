@@ -36,5 +36,7 @@ public class Survey {
     public Survey(String name) {
         this.name = name;
         isActive = false;
+        startDate = new Date();
+        endDate = new Date();
     }
 }

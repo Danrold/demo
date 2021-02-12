@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SurveyService {
 
-    List<Survey> getAll(String field, boolean isAscending);
+    List<Survey> getAll(String field, String isAscending);
 
     Survey create(String name);
 
