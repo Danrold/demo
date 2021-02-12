@@ -1,13 +1,14 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -29,4 +30,9 @@ public class Question {
     @JsonIgnore
     private Survey survey;
 
+    public Question(String text, int index, Survey survey) {
+        this.text = text;
+        this.index = index;
+        this.survey = survey;
+    }
 }
