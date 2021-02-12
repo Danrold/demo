@@ -5,6 +5,9 @@ import com.example.demo.entity.Survey;
 
 import java.util.List;
 
+/**
+ * Интерфейс описывающий методы для работы с опросами
+ */
 public interface SurveyService {
 
     List<Survey> getAll(String field, String isAscending);

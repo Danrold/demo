@@ -9,20 +9,34 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Имплементация интерфейса SurveyService
+ * @author Ivan Medvedev
+ */
 @Service
 public class SurveyServiceImpl implements SurveyService{
 
+    /**
+     * JPA репозиторий для работы с сущностью Опрос
+     */
     private final SurveyRepository surveyRepository;
-    private final QuestionRepository questionRepository;
 
-    //private final int MILLISECONDS_IN_HOUR = 3600000;
-
+    /**
+     * Конструктор класса
+     * @param surveyRepository JPA репозиторий для работы с сущностью Опрос
+     */
     @Autowired
-    public SurveyServiceImpl(SurveyRepository surveyRepository, QuestionRepository questionRepository) {
+    public SurveyServiceImpl(SurveyRepository surveyRepository) {
         this.surveyRepository = surveyRepository;
-        this.questionRepository = questionRepository;
     }
 
+    /**
+     * Метод возвращает отсортированный список опросов
+     * @param field Поле для сортировки (доступные значения: name, startDate)
+     * @param isAscending Порядок сортировки. Если установлен флаг true сортировка выполняется по возрастанию, false - по убыванию
+     * @return Список опросов
+     * @throws RuntimeException Бросается если значение field не соответствует доступным значениям
+     */
     @Override
     public List<Survey> getAll(String field, String isAscending) throws RuntimeException{
         if(!field.equals("name") && !field.equals("startDate")) throw new RuntimeException("Сортировка доступна только по полям name, startDate");
@@ -35,12 +49,24 @@ public class SurveyServiceImpl implements SurveyService{
         return surveyRepository.findAll(sort);
     }
 
+    /**
+     * Метод создает новый опрос
+     * @param name Имя опроса
+     * @return Созданный опрос
+     */
     @Override
     public Survey create(String name){
         Survey survey = new Survey(name);
         return surveyRepository.saveAndFlush(survey);
     }
 
+    /**
+     * Метод редактирует существующий опрос
+     * @see com.example.demo.dto EditRequestDTO
+     * @param editRequest объект содержащий информацию для редактирования
+     * @return Обновленный опрос
+     * @throws RuntimeException Бросается если опрос с указанным идентификатором не был найден, а так же если дата окончания опроса укзана раньше даты начала опроса
+     */
     @Override
     public Survey edit(EditRequestDTO editRequest) throws RuntimeException {
         Survey survey = surveyRepository.findById(UUID.fromString(editRequest.getId())).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
@@ -60,6 +86,11 @@ public class SurveyServiceImpl implements SurveyService{
         return surveyRepository.saveAndFlush(survey);
     }
 
+    /**
+     * Метод удаляет существующий опрос
+     * @param id Идентификатор опроса
+     * @throws RuntimeException Бросается если опрос с указанным идентификатором не был найден
+     */
     @Override
     public void delete(String id) throws RuntimeException{
         UUID uuid = UUID.fromString(id);
