@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 /**
@@ -62,14 +63,14 @@ public class SurveyServiceImpl implements SurveyService{
 
     /**
      * Метод редактирует существующий опрос
-     * @see com.example.demo.dto EditRequestDTO
+     * @see com.example.demo.dto.EditRequestDTO
      * @param editRequest объект содержащий информацию для редактирования
      * @return Обновленный опрос
      * @throws RuntimeException Бросается если опрос с указанным идентификатором не был найден, а так же если дата окончания опроса укзана раньше даты начала опроса
      */
     @Override
     public Survey edit(EditRequestDTO editRequest) throws RuntimeException {
-        Survey survey = surveyRepository.findById(UUID.fromString(editRequest.getId())).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
+        Survey survey = surveyRepository.findById(UUID.fromString(editRequest.getId())).orElseThrow(()->new EntityNotFoundException("Опрос с данным ID не найден"));
 
         Date start = editRequest.getStart();
         Date end = editRequest.getEnd();
@@ -89,12 +90,12 @@ public class SurveyServiceImpl implements SurveyService{
     /**
      * Метод удаляет существующий опрос
      * @param id Идентификатор опроса
-     * @throws RuntimeException Бросается если опрос с указанным идентификатором не был найден
+     * @throws EntityNotFoundException Бросается если опрос с указанным идентификатором не был найден
      */
     @Override
-    public void delete(String id) throws RuntimeException{
+    public void delete(String id) throws EntityNotFoundException{
         UUID uuid = UUID.fromString(id);
-        Survey survey = surveyRepository.findById(uuid).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
+        Survey survey = surveyRepository.findById(uuid).orElseThrow(()->new EntityNotFoundException("Опрос с данным ID не найден"));
         surveyRepository.delete(survey);
     }
 }
