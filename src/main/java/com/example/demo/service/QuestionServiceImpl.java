@@ -5,6 +5,7 @@ import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 /**
@@ -39,11 +40,11 @@ public class QuestionServiceImpl implements QuestionService {
      * @param surveyID Идентификатор опроса
      * @param text Текст вопроса
      * @return Обновленный опрос
-     * @throws RuntimeException Бросается если опрос не был найден
+     * @throws EntityNotFoundException Бросается если опрос не был найден
      */
     @Override
-    public Survey addQuestion(String surveyID, String text) throws RuntimeException{
-        Survey survey = surveyRepository.findById(UUID.fromString(surveyID)).orElseThrow(()->new RuntimeException("Опрос с данным ID не найден"));
+    public Survey addQuestion(String surveyID, String text) throws EntityNotFoundException{
+        Survey survey = surveyRepository.findById(UUID.fromString(surveyID)).orElseThrow(()->new EntityNotFoundException("Опрос с данным ID не найден"));
         List<Question> questions = survey.getQuestions();
         int questionCount = questions.size();
         Question question = new Question(text, ++questionCount, survey);
@@ -57,11 +58,11 @@ public class QuestionServiceImpl implements QuestionService {
      * @param questionID Идентификатор вопроса
      * @param text Новый текст вопроса
      * @return Обновленный опрос
-     * @throws RuntimeException Бросается если вопрос не был найден
+     * @throws EntityNotFoundException Бросается если вопрос не был найден
      */
     @Override
-    public Survey editQuestion(String questionID, String text) throws RuntimeException{
-        Question question = questionRepository.findById(UUID.fromString(questionID)).orElseThrow(()->new RuntimeException("Вопрос с данным ID не найден"));
+    public Survey editQuestion(String questionID, String text) throws EntityNotFoundException{
+        Question question = questionRepository.findById(UUID.fromString(questionID)).orElseThrow(()->new EntityNotFoundException("Вопрос с данным ID не найден"));
         question.setText(text);
         questionRepository.saveAndFlush(question);
         return question.getSurvey();
@@ -71,11 +72,11 @@ public class QuestionServiceImpl implements QuestionService {
      * Метод удаляет вопрос по идентификатору
      * @param questionID Идентификатор вопроса
      * @return Обновленный опрос
-     * @throws RuntimeException Бросается если вопрос не был найден
+     * @throws EntityNotFoundException Бросается если вопрос не был найден
      */
     @Override
-    public Survey deleteQuestion(String questionID) throws RuntimeException{
-        Question question = questionRepository.findById(UUID.fromString(questionID)).orElseThrow(()->new RuntimeException("Вопрос с данным ID не найден"));
+    public Survey deleteQuestion(String questionID) throws EntityNotFoundException{
+        Question question = questionRepository.findById(UUID.fromString(questionID)).orElseThrow(()->new EntityNotFoundException("Вопрос с данным ID не найден"));
         Survey survey = question.getSurvey();
         List<Question> questions = survey.getQuestions();
         int deleteIndex = question.getIndex();

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.*;
 import javax.validation.constraints.*;
 
@@ -117,11 +118,7 @@ public class SurveyRestController {
     @PostMapping(value = "/question/add")
     public ResponseEntity<Object> addQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                     message = "Ошибка в формате ID") String surveyID, @RequestParam @NotBlank String text){
-        try{
-            return new ResponseEntity<>(questionService.addQuestion(surveyID, text), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(questionService.addQuestion(surveyID, text), HttpStatus.OK);
     }
 
     /**
@@ -133,11 +130,7 @@ public class SurveyRestController {
     @PutMapping(value = "/question/edit")
     public ResponseEntity<Object> editQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
             message = "Ошибка в формате ID") String questionID, @RequestParam String text){
-        try{
-            return new ResponseEntity<>(questionService.editQuestion(questionID, text), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(questionService.editQuestion(questionID, text), HttpStatus.OK);
     }
 
     /**
@@ -148,12 +141,10 @@ public class SurveyRestController {
     @DeleteMapping(value = "/question/delete")
     public ResponseEntity<Object> deleteQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
             message = "Ошибка в формате ID") String questionID){
-        try{
-            return new ResponseEntity<>(questionService.deleteQuestion(questionID), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(questionService.deleteQuestion(questionID), HttpStatus.OK);
     }
+
+
 
     /**
      * Обработчик исключения - ConstraintViolationException
@@ -175,6 +166,12 @@ public class SurveyRestController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
         return new ResponseEntity<>("Ошибка валидации. Поле " + exception.getFieldError().getField() + exception.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }
