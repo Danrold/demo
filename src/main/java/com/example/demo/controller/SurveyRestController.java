@@ -168,9 +168,25 @@ public class SurveyRestController {
         return new ResponseEntity<>("Ошибка валидации. Поле " + exception.getFieldError().getField() + exception.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Обработчик исключения - EntityNotFoundException
+     * @param exception Исключение которое может возникнуть, если по указанному ID не удалось найти сущность
+     * @return Сообщение об ошибке
+     */
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Обработчик исключения - RuntimeException
+     * @param exception Исключение которое может возникнуть при работе сервисного слоя
+     * @return Сообщение об ошибке
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity<Object> handleEntityNotFoundException(RuntimeException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
