@@ -181,7 +181,7 @@ public class SurveyRestController {
      * @return Сообщение об ошибке
      */
     @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleEntityNotFoundException(RuntimeException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
