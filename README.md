@@ -10,3 +10,6 @@ To deploy the application to your computer, repeat the following steps in sequen
 5. Alternatively, you can run the finished JAR file. Hope it works
 
 The project will also be deployed on free Heroku hosting. You will have access to the GUI documentation from swagger-ui 
+
+Try it!
+https://demo-for-liderit.herokuapp.com/swagger-ui.html
