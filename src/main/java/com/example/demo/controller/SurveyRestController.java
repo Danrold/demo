@@ -68,7 +68,7 @@ public class SurveyRestController {
     @ApiOperation(value = "Создание нового опроса", notes = "Создает пустой опрос с указанным названием. Допустимы неуникальные названия")
     @PostMapping(value = "/create")
     public ResponseEntity<Object> create(@RequestParam @NotBlank String name){
-        return new ResponseEntity<>(surveyService.create(name), HttpStatus.OK);
+        return new ResponseEntity<>(surveyService.create(name), HttpStatus.CREATED);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SurveyRestController {
             (regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                     message = "Ошибка в формате ID") String id){
         surveyService.delete(id);
-        return new ResponseEntity<>("Опрос успешно удален", HttpStatus.OK);
+        return new ResponseEntity<>("Опрос успешно удален", HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -111,7 +111,7 @@ public class SurveyRestController {
     @PostMapping(value = "/question/add")
     public ResponseEntity<Object> addQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                     message = "Ошибка в формате ID") String surveyID, @RequestParam @NotBlank String text){
-        return new ResponseEntity<>(questionService.addQuestion(surveyID, text), HttpStatus.OK);
+        return new ResponseEntity<>(questionService.addQuestion(surveyID, text), HttpStatus.CREATED);
     }
 
     /**
@@ -137,7 +137,7 @@ public class SurveyRestController {
     @DeleteMapping(value = "/question/delete")
     public ResponseEntity<Object> deleteQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
             message = "Ошибка в формате ID") String questionID){
-        return new ResponseEntity<>(questionService.deleteQuestion(questionID), HttpStatus.OK);
+        return new ResponseEntity<>(questionService.deleteQuestion(questionID), HttpStatus.NO_CONTENT);
     }
 
 
