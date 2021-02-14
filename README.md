@@ -1,4 +1,4 @@
-# demo
+# Demo
 Repository for test app (LiderIT)
 
 To deploy the application to your computer, repeat the following steps in sequence:
