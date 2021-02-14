@@ -20,10 +20,11 @@ import javax.validation.constraints.*;
  * @author Ivan Medvedev
  */
 
-@Api(value = "Контроллер предоставляющий API для работы с опросами")
+
 @Validated
 @RestController
 @RequestMapping(value = "api/demo")
+@Api(value = "api/demo", tags = {"REST контроллер для работы с опросами"}, produces = "application/json")
 public class SurveyRestController {
 
     /**
