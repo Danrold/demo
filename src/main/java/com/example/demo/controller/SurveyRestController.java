@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.EditRequestDTO;
 import com.example.demo.service.*;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import javax.validation.constraints.*;
  * @author Ivan Medvedev
  */
 
+@Api(value = "Контроллер предоставляющий API для работы с опросами")
 @Validated
 @RestController
 @RequestMapping(value = "api/demo")
@@ -49,14 +51,12 @@ public class SurveyRestController {
      * @param isAscending Порядок сортировки. Если установлен флаг true сортировка выполняется по возрастанию, false - по убыванию
      * @return Список существующих опросов
      */
+    @ApiOperation(value = "Получить список опросов",
+            notes = "Параметр field отвечает за сортировку. На текущий момент доступна сортировка по названию опроса (name) или по дате начала (startDate)")
     @GetMapping(value = "/get")
     public ResponseEntity<Object> getAll(@RequestParam @NotBlank String field,
             @RequestParam @Pattern(regexp = "^true$|^false$", message = "Параметр isAscending должен принимать только true или false") String isAscending){
-        try{
-            return new ResponseEntity<>(surveyService.getAll(field, isAscending), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(surveyService.getAll(field, isAscending), HttpStatus.OK);
     }
 
     /**
@@ -64,13 +64,10 @@ public class SurveyRestController {
      * @param name Имя создаваемого опроса, допустимо неуникальное значение
      * @return Созданный опрос
      */
+    @ApiOperation(value = "Создание нового опроса", notes = "Создает пустой опрос с указанным названием. Допустимы неуникальные названия")
     @PostMapping(value = "/create")
     public ResponseEntity<Object> create(@RequestParam @NotBlank String name){
-        try{
-            return new ResponseEntity<>(surveyService.create(name), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(surveyService.create(name), HttpStatus.OK);
     }
 
     /**
@@ -83,13 +80,10 @@ public class SurveyRestController {
      *                   isActive - флаг активности опроса
      * @return Обновленный опрос
      */
+    @ApiOperation(value = "Редактирование опроса", notes = "Метод позволяет редактировать название, дату проведения и активность опроса")
     @PutMapping(value = "/edit")
     public ResponseEntity<Object> edit(@Valid @RequestBody EditRequestDTO requestDTO){
-        try{
-            return new ResponseEntity<>(surveyService.edit(requestDTO), HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return new ResponseEntity<>(surveyService.edit(requestDTO), HttpStatus.OK);
     }
 
     /**
@@ -97,16 +91,13 @@ public class SurveyRestController {
      * @param id Идентификатор удаляемого опроса
      * @return Сообщение об успешном удалении
      */
+    @ApiOperation(value = "Удаление опроса", notes = "Метод удаляет существующий опрос по его идентификатору")
     @DeleteMapping(value = "/delete")
     public ResponseEntity<Object> delete(@RequestParam @Pattern
             (regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                     message = "Ошибка в формате ID") String id){
-        try{
-            surveyService.delete(id);
-            return new ResponseEntity<>("Опрос успешно удален", HttpStatus.OK);
-        }catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        surveyService.delete(id);
+        return new ResponseEntity<>("Опрос успешно удален", HttpStatus.OK);
     }
 
     /**
@@ -115,6 +106,7 @@ public class SurveyRestController {
      * @param text Текст вопроса
      * @return Обновленный опрос
      */
+    @ApiOperation(value = "Создание вопрос", notes = "Метод позволяет добавить новый вопрос к существующему опросу")
     @PostMapping(value = "/question/add")
     public ResponseEntity<Object> addQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                     message = "Ошибка в формате ID") String surveyID, @RequestParam @NotBlank String text){
@@ -127,9 +119,11 @@ public class SurveyRestController {
      * @param text Новый текст вопроса
      * @return Обновленный опрос
      */
+    @ApiOperation(value = "Редактирование вопроса", notes = "Метод позволяет изменить текст вопроса")
     @PutMapping(value = "/question/edit")
-    public ResponseEntity<Object> editQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-            message = "Ошибка в формате ID") String questionID, @RequestParam String text){
+    public ResponseEntity<Object> editQuestion(
+            @RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", message = "Ошибка в формате ID") String questionID,
+            @RequestParam String text){
         return new ResponseEntity<>(questionService.editQuestion(questionID, text), HttpStatus.OK);
     }
 
@@ -138,6 +132,7 @@ public class SurveyRestController {
      * @param questionID Идентификатор удаляемого вопроса
      * @return Обновленный опрос
      */
+    @ApiOperation(value = "Удаление вопроса", notes = "Метод позволяет удалить вопрос")
     @DeleteMapping(value = "/question/delete")
     public ResponseEntity<Object> deleteQuestion(@RequestParam @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
             message = "Ошибка в формате ID") String questionID){
